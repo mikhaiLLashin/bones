@@ -1,0 +1,4 @@
+train: C:\Users\lashi\Desktop\bones\train\images
+val: C:\Users\lashi\Desktop\bones\val\images
+nc: 2
+names: ['big_bone', 'small_bone']
