@@ -12,11 +12,11 @@ import warnings
 from datetime import datetime
 from keras.callbacks import ModelCheckpoint
 
-IMAGE_SIZE = [ 800 , 500 , 3 ]
+IMAGE_SIZE = [ 512 , 512 , 3 ]
 vgg = VGG19( include_top = False,
             input_shape = IMAGE_SIZE,
             weights = 'imagenet')
-for  layer in vgg.layers:
+for  layer in vgg.layers[:-7]:
     layer.trainable = False
 
 x = Flatten()(vgg.output)
@@ -57,17 +57,17 @@ test_path = "crop_imgs_test/big"
 
 
 train_set = train_datagen.flow_from_directory(train_path,
-                                            target_size = ( 800 , 500 ),
-                                            batch_size = 5,
+                                            target_size = ( 512 , 512 ),
+                                            batch_size = 2,
                                             class_mode = 'categorical')
 
 test_set = test_datagen.flow_from_directory(test_path,
-                                             target_size = ( 800 , 500 ),
-                                            batch_size = 1,
+                                             target_size = ( 512 , 512 ),
+                                            batch_size = 2,
                                             class_mode = 'categorical')
 
 
-'''checkpoint = ModelCheckpoint(filepath = 'version1.h5' , verbose = 2 , save_best_only = True )
+checkpoint = ModelCheckpoint(filepath = 'nor_ver.h5' , verbose = 2 , save_best_only = True )
 callbacks = [checkpoint]
 start = datetime.now()
 model_history = model.fit( train_set,
@@ -76,16 +76,6 @@ model_history = model.fit( train_set,
                           steps_per_epoch = 5,
                           validation_steps = 32,
                           callbacks = callbacks,
-                          verbose = 2)'''
+                          verbose = 2)
 
-model.load_weights("version1.h5")
-
-for i in model.predict(test_set):
-    m = 0
-    ma = 0
-    for j in range(len(i)):
-        if (m < i[j]):
-            m = i[j]
-            ma = j
-    print(ma)
-print(model.predict(test_set))
+print(model.evaluate(test_set))
